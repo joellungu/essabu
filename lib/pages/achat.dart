@@ -1,5 +1,6 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:essabu/pages/accueil.dart';
+import 'package:essabu/pages/modification.dart';
 import 'package:essabu/utils/app_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -79,6 +80,78 @@ class Achat extends StatelessWidget {
                             // },
                             onLongPress: () {
                               //
+                              Get.dialog(
+                                Center(
+                                  child: Container(
+                                    height: 200,
+                                    width: 200,
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            Get.back();
+                                            Get.to(
+                                              Modification(
+                                                appController.produits[index],
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            width: 250,
+                                            height: 48,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: Colors.black,
+                                            ),
+                                            child: Text(
+                                              "Modifier la quantité",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            appController.produits.removeAt(
+                                              index,
+                                            );
+                                            Get.back();
+                                          },
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            width: 250,
+                                            height: 48,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: Colors.red.shade700,
+                                            ),
+                                            child: Text(
+                                              "Supprimer de la liste",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
                             },
                             cells: [
                               DataCell(

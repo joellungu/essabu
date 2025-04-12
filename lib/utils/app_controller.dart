@@ -81,7 +81,7 @@ class AppController extends GetxController {
     }
   }
 
-  envoiCommande(Map commande, String token) async {
+  Future<bool> envoiCommande(Map commande, String token) async {
     //https://essabu.com/api/invoices
     //Map user = box.read("user");
     //
@@ -91,14 +91,16 @@ class AppController extends GetxController {
       //
       print("Status: ${response.status}");
       print("Produits: ${response.body}");
-      Get.back();
+      //Get.back();
       //
+      return true;
     } else {
       //
       print("Status: ${response.status}");
       print("Produits: ${response.body}");
-      Get.back();
+      //Get.back();
       //
+      return false;
     }
   }
 }

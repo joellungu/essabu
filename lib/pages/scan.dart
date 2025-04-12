@@ -39,6 +39,9 @@ class _QRViewExampleState extends State<QRViewExample> {
   //
   var box = GetStorage();
   //
+  String devise = "";
+  double price = 0.0;
+  //
   //AppController appController = Get.find();
 
   // In order to get hot reload to work we need to pause the camera if the platform
@@ -161,6 +164,9 @@ class _QRViewExampleState extends State<QRViewExample> {
                     //produit.isNotEmpty
                     if (true) {
                       //4006381333931
+
+                      devise = produit['currency']['name'];
+                      price = produit['price'];
                       name = "Produit 1"; // produit['name'];
                       id =
                           "01962948-c44b-782a-bff9-bc484bfcc1f4"; // produit['id'];
@@ -259,10 +265,24 @@ class _QRViewExampleState extends State<QRViewExample> {
                                 "items": items,
                               };
                               //
-                              appController.envoiCommande(
+                              bool rep = await appController.envoiCommande(
                                 commande,
                                 user['token'],
                               );
+                              if (rep) {
+                                appController.produits.clear();
+                                Get.back();
+                                Get.snackbar(
+                                  "Succès",
+                                  "Commande envoyé avec succès.",
+                                );
+                              } else {
+                                Get.back();
+                                Get.snackbar(
+                                  "Erreur",
+                                  "Commande enregistré en local.",
+                                );
+                              }
                             } else {
                               List ventes = box.read("ventes") ?? [];
                               //
@@ -304,7 +324,7 @@ class _QRViewExampleState extends State<QRViewExample> {
               ),
             ],
           ),
-          Details(pageController, id, name, currentStock),
+          Details(pageController, id, name, price, devise, currentStock),
         ],
       ),
     );
@@ -344,19 +364,27 @@ class Details extends StatelessWidget {
   //
   AppController appController = Get.find();
   //
-
   PageController pageController;
   //
-  Details(this.pageController, this.id, this.name, this.currentStock);
+  Details(
+    this.pageController,
+    this.id,
+    this.name,
+    this.price,
+    this.devise,
+    this.currentStock,
+  );
   //
   String id;
   String name;
   int currentStock;
+  String devise;
+  double price;
   String part1 = "Tomate";
   String part2 = "1.99 \$";
   String part3 = "Tomate serise de Goma";
   //
-  TextEditingController quantite = TextEditingController();
+  TextEditingController quantite = TextEditingController(text: "1");
   //
   @override
   Widget build(BuildContext context) {
@@ -391,20 +419,20 @@ class Details extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               children: [
                 TextSpan(
-                  text: '$part1\n',
+                  text: '$name\n',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 30,
                   ), // Noir standard
                 ),
                 TextSpan(
-                  text: '$part2\n',
+                  text: '$price\n',
                   style: TextStyle(
                     color: Colors.black87,
                   ), // Noir légèrement adouci
                 ),
                 TextSpan(
-                  text: '$part3',
+                  text: devise,
                   style: TextStyle(
                     color: Colors.black54,
                   ), // Noir plus doux encore
@@ -435,17 +463,29 @@ class Details extends StatelessWidget {
           InkWell(
             onTap: () {
               //Get.offAll(Login());
-              appController.produits.add({
-                "id": id,
-                "name": name,
-                "quantity": double.parse(quantite.text),
-                "prix": 1.99,
-              });
-              //
-              pageController.previousPage(
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.linear,
-              );
+              if (double.parse(quantite.text.isEmpty ? "1" : quantite.text) >
+                  currentStock) {
+                Get.snackbar(
+                  "Erreur",
+                  "Stock insuffisant désolé",
+                  backgroundColor: Colors.red.shade700,
+                  colorText: Colors.white,
+                );
+              } else {
+                appController.produits.add({
+                  "id": id,
+                  "name": name,
+                  "quantity": double.parse(
+                    quantite.text.isEmpty ? "1" : quantite.text,
+                  ),
+                  "prix": 1.99,
+                });
+                //
+                pageController.previousPage(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.linear,
+                );
+              }
             },
             child: Container(
               alignment: Alignment.center,
