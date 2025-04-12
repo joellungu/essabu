@@ -148,13 +148,16 @@ class _QRViewExampleState extends State<QRViewExample> {
                   setState(() {
                     String barcode = res as String;
                     //
+
+                    //
                     List produits = box.read("produits") ?? [];
                     //
                     Map produit = {};
                     //
                     for (Map p in produits) {
-                      if (p['barcode'] == barcode) {
+                      if ("${p['barcode']}" == barcode) {
                         produit = p;
+                        break;
                       }
                     }
                     //
@@ -162,20 +165,79 @@ class _QRViewExampleState extends State<QRViewExample> {
                     //&&
                     //|| || part1 != "-1"
                     //produit.isNotEmpty
-                    if (true) {
+                    if (produit['name'] != null) {
                       //4006381333931
+                      // Get.snackbar(
+                      //   "Barecode",
+                      //   "$barcode : ${produit['name']}",
+                      //   backgroundColor: Colors.white,
+                      //   colorText: Colors.black,
+                      // );
 
-                      devise = produit['currency']['name'];
-                      price = produit['price'];
-                      name = "Produit 1"; // produit['name'];
-                      id =
-                          "01962948-c44b-782a-bff9-bc484bfcc1f4"; // produit['id'];
+                      try {
+                        devise = produit['currency']['name'];
+
+                        price = double.parse(produit['price'] ?? "0.0");
+                        name = produit['name']; //"Produit 1"; //
+                        id = produit['id'] ?? "";
+                        //"01962948-c44b-782a-bff9-bc484bfcc1f4";
+                        //
+                        currentStock = produit['currentStock'] ?? 0;
+                        //
+                        Get.to(
+                          Details(
+                            pageController,
+                            id,
+                            name,
+                            price,
+                            devise,
+                            currentStock,
+                          ),
+                        );
+                        // pageController.nextPage(
+                        //   duration: const Duration(milliseconds: 500),
+                        //   curve: Curves.linear,
+                        // );
+                      } catch (e) {
+                        Get.snackbar(
+                          "Erreur",
+                          "Du à: $e",
+                          backgroundColor: Colors.red.shade700,
+                          colorText: Colors.white,
+                        );
+                      }
+
                       //
-                      currentStock = produit['currentStock'] ?? 0;
-                      //
-                      pageController.nextPage(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.linear,
+                      // showModalBottomSheet(
+                      //   context: context,
+                      //   isScrollControlled: true,
+                      //   builder: (context) {
+                      //     return Container(
+                      //       decoration: BoxDecoration(
+                      //         borderRadius: BorderRadius.only(
+                      //           topLeft: Radius.circular(15),
+                      //           topRight: Radius.circular(15),
+                      //         ),
+                      //       ),
+                      //       height: Get.size.height / 1.3,
+                      //       width: Get.size.width,
+                      //       child: Details(
+                      //         pageController,
+                      //         id,
+                      //         name,
+                      //         price,
+                      //         devise,
+                      //         currentStock,
+                      //       ),
+                      //     );
+                      //   },
+                      // );
+                    } else {
+                      Get.snackbar(
+                        "Erreur",
+                        "Aucun produit trouvé.",
+                        backgroundColor: Colors.yellow,
+                        colorText: Colors.black,
                       );
                     }
                   });
@@ -275,12 +337,14 @@ class _QRViewExampleState extends State<QRViewExample> {
                                 Get.snackbar(
                                   "Succès",
                                   "Commande envoyé avec succès.",
+                                  backgroundColor: Colors.white,
                                 );
                               } else {
                                 Get.back();
                                 Get.snackbar(
                                   "Erreur",
                                   "Commande enregistré en local.",
+                                  backgroundColor: Colors.red.shade700,
                                 );
                               }
                             } else {
@@ -389,123 +453,128 @@ class Details extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //
-    return Container(
-      color: Colors.white,
-      padding: EdgeInsets.all(30),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          //
-          Container(
-            height: 220,
-            width: 220,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(110),
-              color: Colors.grey.shade200,
-            ),
-            alignment: Alignment.center,
-            child: SvgPicture.asset(
-              "assets/HugeiconsShoppingCartCheck02.svg",
-              width: 150,
-              height: 150,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 20),
-          RichText(
-            textAlign: TextAlign.left,
-
-            text: TextSpan(
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              children: [
-                TextSpan(
-                  text: '$name\n',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 30,
-                  ), // Noir standard
-                ),
-                TextSpan(
-                  text: '$price\n',
-                  style: TextStyle(
-                    color: Colors.black87,
-                  ), // Noir légèrement adouci
-                ),
-                TextSpan(
-                  text: devise,
-                  style: TextStyle(
-                    color: Colors.black54,
-                  ), // Noir plus doux encore
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Container(
-            alignment: Alignment.center,
-            width: 250,
-
-            //height: 48,
-            child: TextField(
-              keyboardType: TextInputType.number,
-              autofocus: true,
-              controller: quantite,
-              decoration: InputDecoration(
-                hintText: "Quantité par Kg",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.black, width: 2),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          InkWell(
-            onTap: () {
-              //Get.offAll(Login());
-              if (double.parse(quantite.text.isEmpty ? "1" : quantite.text) >
-                  currentStock) {
-                Get.snackbar(
-                  "Erreur",
-                  "Stock insuffisant désolé",
-                  backgroundColor: Colors.red.shade700,
-                  colorText: Colors.white,
-                );
-              } else {
-                appController.produits.add({
-                  "id": id,
-                  "name": name,
-                  "quantity": double.parse(
-                    quantite.text.isEmpty ? "1" : quantite.text,
-                  ),
-                  "prix": 1.99,
-                });
-                //
-                pageController.previousPage(
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.linear,
-                );
-              }
-            },
-            child: Container(
-              alignment: Alignment.center,
-              width: 250,
-              height: 48,
+    return Scaffold(
+      appBar: AppBar(),
+      body: Container(
+        color: Colors.white,
+        padding: EdgeInsets.all(30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            //
+            Container(
+              height: 220,
+              width: 220,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(110),
+                color: Colors.grey.shade200,
+              ),
+              alignment: Alignment.center,
+              child: SvgPicture.asset(
+                "assets/HugeiconsShoppingCartCheck02.svg",
+                width: 150,
+                height: 150,
                 color: Colors.black,
               ),
-              child: Text(
-                "Ajouter le produit",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
+            ),
+            const SizedBox(height: 20),
+            RichText(
+              textAlign: TextAlign.left,
+
+              text: TextSpan(
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                children: [
+                  TextSpan(
+                    text: '$name\n',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 30,
+                    ), // Noir standard
+                  ),
+                  TextSpan(
+                    text: '$price\n',
+                    style: TextStyle(
+                      color: Colors.black87,
+                    ), // Noir légèrement adouci
+                  ),
+                  TextSpan(
+                    text: devise,
+                    style: TextStyle(
+                      color: Colors.black54,
+                    ), // Noir plus doux encore
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              alignment: Alignment.center,
+              width: 250,
+
+              //height: 48,
+              child: TextField(
+                keyboardType: TextInputType.number,
+                autofocus: true,
+                controller: quantite,
+                decoration: InputDecoration(
+                  hintText: "Quantité par Kg",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.black, width: 2),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            InkWell(
+              onTap: () {
+                //Get.offAll(Login());
+                if (double.parse(quantite.text.isEmpty ? "1" : quantite.text) >
+                    currentStock) {
+                  Get.snackbar(
+                    "Erreur",
+                    "Stock insuffisant désolé",
+                    backgroundColor: Colors.red.shade700,
+                    colorText: Colors.white,
+                  );
+                } else {
+                  appController.produits.add({
+                    "id": id,
+                    "name": name,
+                    "quantity": double.parse(
+                      quantite.text.isEmpty ? "1" : quantite.text,
+                    ),
+                    "prix": 1.99,
+                  });
+                  //
+                  Get.back();
+                  // pageController.previousPage(
+                  //   duration: const Duration(milliseconds: 500),
+                  //   curve: Curves.linear,
+                  // );
+                }
+              },
+              child: Container(
+                alignment: Alignment.center,
+                width: 250,
+                height: 48,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.black,
+                ),
+                child: Text(
+                  "Ajouter le produit",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -23,7 +23,7 @@ class Modification extends StatelessWidget {
       appBar: AppBar(title: Text("Modifier la quantité")),
       body: Container(
         color: Colors.white,
-        padding: EdgeInsets.all(30),
+        padding: EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -140,6 +140,7 @@ class Modification extends StatelessWidget {
                 ),
               ),
             ),
+            //
           ],
         ),
       ),

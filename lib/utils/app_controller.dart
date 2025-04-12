@@ -92,6 +92,7 @@ class AppController extends GetxController {
       print("Status: ${response.status}");
       print("Produits: ${response.body}");
       //Get.back();
+      getAllProduits2(token);
       //
       return true;
     } else {
@@ -101,6 +102,20 @@ class AppController extends GetxController {
       //Get.back();
       //
       return false;
+    }
+  }
+
+  getAllProduits2(String token) async {
+    //
+    Response response = await requete.getE("products", token);
+    //
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      //
+      print("Status: ${response.status}");
+      print("Produits: ${response.body}");
+      //
+      box.write("produits", response.body);
+      //
     }
   }
 }

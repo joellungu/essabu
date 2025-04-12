@@ -82,72 +82,51 @@ class Achat extends StatelessWidget {
                               //
                               Get.dialog(
                                 Center(
-                                  child: Container(
-                                    height: 200,
-                                    width: 200,
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        InkWell(
-                                          onTap: () {
-                                            Get.back();
-                                            Get.to(
-                                              Modification(
-                                                appController.produits[index],
+                                  child: Card(
+                                    child: Container(
+                                      height: 200,
+                                      width: 200,
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          Text(
+                                            "Voulez-vous vraiment supprimer ce produit ? ${appController.produits[index]['name']}",
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              appController.produits.removeAt(
+                                                index,
+                                              );
+                                              Get.back();
+                                            },
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              width: 250,
+                                              height: 48,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: Colors.red.shade700,
                                               ),
-                                            );
-                                          },
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            width: 250,
-                                            height: 48,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: Colors.black,
-                                            ),
-                                            child: Text(
-                                              "Modifier la quantité",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15,
+                                              child: Text(
+                                                "Supprimer de la liste",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            appController.produits.removeAt(
-                                              index,
-                                            );
-                                            Get.back();
-                                          },
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            width: 250,
-                                            height: 48,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: Colors.red.shade700,
-                                            ),
-                                            child: Text(
-                                              "Supprimer de la liste",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
